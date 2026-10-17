@@ -37,7 +37,7 @@ Push to GitHub, then on Streamlit Community Cloud pick the repo, branch `main`, 
 OPENAI_API_KEY = "your-openai-api-key"
 OPENAI_MODEL = "gpt-4o-mini"
 ```
-Configure these values in the app's **Manage app > Settings > Secrets** page before sharing the link. The key is read only on the server and is not shown in the app UI. Do not put API keys in app code or share them in chat. API errors, including invalid keys, unavailable models, rate limits, and usage limits, are shown in the app.
+Before sharing the link, the app owner must configure `OPENAI_API_KEY` in **Manage app > Settings > Secrets**. Set `OPENAI_MODEL` there optionally; the default is `gpt-4o-mini`. Visitors can then use the chatbot without providing their own API key. The key is read only on the server and is not shown in the app UI. Do not put API keys in app code or share them in chat. API errors, including invalid keys, unavailable models, rate limits, and usage limits, are shown in the app.
 
 ## Testing results
 Use the **Assistant test cases** section in the app to check replies against the prompt, then export the marked results as CSV. Prompt rules are versioned in `prompts.py`.

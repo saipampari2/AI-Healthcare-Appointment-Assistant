@@ -48,8 +48,9 @@ def generate_reply(messages):
     key = get_api_key()
     if not key:
         return None, (
-            "No OpenAI API key found. Add OPENAI_API_KEY to your .env file "
-            "(local) or to Streamlit Secrets (deployed)."
+            "The AI assistant is not configured yet. The app owner must add "
+            "OPENAI_API_KEY in Streamlit Cloud under Manage app > Settings > Secrets. "
+            "Visitors do not need to provide an API key."
         )
     if key.lower() in {"your-openai-api-key", "your-key-here", "replace-me"}:
         return None, (
