@@ -33,6 +33,16 @@ def get_api_key():
     return os.getenv("OPENAI_API_KEY", "").strip()
 
 
+def get_model():
+    try:
+        model = str(st.secrets["OPENAI_MODEL"]).strip()
+        if model:
+            return model
+    except (StreamlitSecretNotFoundError, KeyError):
+        pass
+    return os.getenv("OPENAI_MODEL", MODEL).strip() or MODEL
+
+
 def generate_reply(messages):
     """Return (reply_text, error_text). Exactly one of them is None."""
     key = get_api_key()
@@ -63,7 +73,7 @@ def generate_reply(messages):
         for message in messages
         if message.get("role") in {"user", "assistant"}
     )
-    model = MODEL
+    model = get_model()
     try:
         response = requests.post(
             OPENAI_API_URL,
