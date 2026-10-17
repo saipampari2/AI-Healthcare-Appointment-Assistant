@@ -24,9 +24,6 @@ st.set_page_config(page_title="AI Healthcare Appointment Assistant", page_icon="
 
 # ---------- LLM layer (only this part depends on the provider) ----------
 def get_api_key():
-    key = st.session_state.get("openai_api_key", "").strip()
-    if key:
-        return key
     try:
         key = str(st.secrets["OPENAI_API_KEY"]).strip()
         if key:
@@ -46,8 +43,8 @@ def generate_reply(messages):
         )
     if key.lower() in {"your-openai-api-key", "your-key-here", "replace-me"}:
         return None, (
-            "The OpenAI API key is still a placeholder. Add a valid key in the sidebar, "
-            ".env file, or Streamlit Secrets. The app does not display or save the key."
+            "The OpenAI API key is still a placeholder. Add a valid key to the server configuration, "
+            ".env file, or Streamlit Secrets."
         )
     if key.startswith("AIza"):
         return None, (
@@ -66,7 +63,7 @@ def generate_reply(messages):
         for message in messages
         if message.get("role") in {"user", "assistant"}
     )
-    model = st.session_state.get("selected_model", MODEL).strip() or MODEL
+    model = MODEL
     try:
         response = requests.post(
             OPENAI_API_URL,
@@ -102,13 +99,13 @@ def generate_reply(messages):
                 "OpenAI rejected this API key (401). Use an API key created on "
                 "platform.openai.com—not a ChatGPT password or Google/Gemini key. "
                 "Create or check the key in your OpenAI account, then replace OPENAI_API_KEY "
-                "in .env or re-enter it in the sidebar. ChatGPT subscriptions and API billing "
+                "in your local .env or Streamlit Cloud Secrets. ChatGPT subscriptions and API billing "
                 "are separate. Never share your key in chat."
             )
         if response.status_code == 403:
             return None, "OpenAI denied access. Check the API key's project permissions and API access."
         if response.status_code == 404:
-            return None, f"OpenAI could not find model '{model}'. Check the model name in the sidebar."
+            return None, f"OpenAI could not find model '{model}'. Check the OPENAI_MODEL setting."
         if response.status_code == 429:
             detail = f" Details: {message}" if message else ""
             return None, (
@@ -141,7 +138,6 @@ ss.setdefault("results", {})  # id -> {"actual","version","result","note"}
 ss.setdefault("demo_appointments", [])
 ss.setdefault("booking_doctor", None)
 ss.setdefault("active_page", "Find Doctors")
-ss.setdefault("selected_model", MODEL)
 
 DEMO_DOCTORS = [
     {
@@ -530,17 +526,6 @@ with st.sidebar:
     )
     ss.active_page = selected_page
     st.divider()
-    with st.expander("OpenAI configuration"):
-        st.caption(
-            "Use an API key from platform.openai.com, not a ChatGPT password or Gemini key. "
-            "API billing is separate from ChatGPT subscriptions."
-        )
-        key_input = st.text_input("OpenAI API key", type="password", key="openai_api_key_input")
-        if key_input != ss.get("openai_api_key", ""):
-            ss["openai_api_key"] = key_input.strip()
-        st.text_input("OpenAI model", key="selected_model")
-        st.caption(f"Default model: {MODEL}. Use a model enabled for your OpenAI API account.")
-
     with st.expander("Assistant test cases"):
         st.caption("Choose a case to send it to the assistant.")
         for test_id, text, _ in TEST_CASES:
@@ -557,7 +542,7 @@ with st.sidebar:
         on_click=start_new_assistant_chat,
     )
     st.divider()
-    st.caption(f"Prompt {PROMPT_VERSION} · {ss.get('selected_model', MODEL)}")
+    st.caption(f"Prompt {PROMPT_VERSION}")
 
 # ---------- dashboard pages ----------
 if selected_page == "Find Doctors":
@@ -629,5 +614,5 @@ elif selected_page == "Test Results":
 st.divider()
 st.caption(
     f"Prototype only · No live hospital connection · Nothing is booked · "
-    f"Prompt {PROMPT_VERSION} · Model {ss.get('selected_model', MODEL)}"
+    f"Prompt {PROMPT_VERSION}"
 )

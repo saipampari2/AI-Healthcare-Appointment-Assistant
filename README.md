@@ -29,7 +29,7 @@ copy .env.example .env     # then add your OpenAI API key to .env
 streamlit run app.py
 ```
 
-Create an API key at the OpenAI platform API keys page and set `OPENAI_API_KEY` in `.env`. Use an OpenAI API key, not a ChatGPT password or Google/Gemini key. ChatGPT subscriptions and API billing are separate; API usage may incur charges and requires an OpenAI project with API access and billing enabled. The default model is `gpt-4o-mini`; change `OPENAI_MODEL` if needed, or edit the model field in the app sidebar.
+Create an API key at the OpenAI platform API keys page and set `OPENAI_API_KEY` in `.env`. Use an OpenAI API key, not a ChatGPT password or Google/Gemini key. ChatGPT subscriptions and API billing are separate; API usage may incur charges and requires an OpenAI project with API access and billing enabled. The default model is `gpt-4o-mini`; set `OPENAI_MODEL` in your local environment to use a different model.
 
 ## Deploy
 Push to GitHub, then on Streamlit Community Cloud pick the repo, branch `main`, file `app.py`. Under Advanced settings > Secrets add:
@@ -37,7 +37,7 @@ Push to GitHub, then on Streamlit Community Cloud pick the repo, branch `main`, 
 OPENAI_API_KEY = "your-openai-api-key"
 OPENAI_MODEL = "gpt-4o-mini"
 ```
-When the app opens, expand **OpenAI configuration** in the sidebar to enter or change your key and model. API errors, including invalid keys, unavailable models, rate limits, and usage limits, are shown in the app.
+Configure these values in the app's **Manage app > Settings > Secrets** page before sharing the link. The key is read only on the server and is not shown in the app UI. Do not put API keys in app code or share them in chat. API errors, including invalid keys, unavailable models, rate limits, and usage limits, are shown in the app.
 
 ## Testing results
 Use the **Assistant test cases** section in the app to check replies against the prompt, then export the marked results as CSV. Prompt rules are versioned in `prompts.py`.
